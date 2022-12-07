@@ -10,7 +10,7 @@ Implementado em Java.
 
 Pré-requisitos:
 
-- Java 11
+- Java 17
 - Maven 3.8+
 
 Para gerar um arquivo `.zip` com os JARS e os scripts necessários, execute:
