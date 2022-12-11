@@ -2,6 +2,7 @@ package cotuba.md;
 
 import cotuba.domain.Capitulo;
 import cotuba.domain.LeTitulo;
+import cotuba.plugin.Plugin;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -31,8 +32,9 @@ public class RenderizadorMDParaHTML {
         try {
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             String html = renderer.render(document);
-
             capitulo.setConteudoHTML(html);
+
+            Plugin.renderizou(capitulo);
         } catch (Exception ex) {
             throw new IllegalStateException("Erro ao renderizar para HTML o arquivo " + arquivoMD, ex);
         }
