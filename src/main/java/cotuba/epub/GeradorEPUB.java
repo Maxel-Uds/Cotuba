@@ -16,13 +16,13 @@ public class GeradorEPUB implements GeradorEbook {
 
     @Override
     public void gera(Ebook ebook) {
-        Path arquivoDeSaida = ebook.getArquivoDeSaida();
+        Path arquivoDeSaida = ebook.arquivoDeSaida();
 
         var epub = new Book();
 
-        for (Capitulo capitulo : ebook.getCapitulos()) {
-            String html = capitulo.getConteudoHTML();
-            String tituloDoCapitulo = capitulo.getTitulo();
+        for (Capitulo capitulo : ebook.capitulos()) {
+            String html = capitulo.conteudoHTML();
+            String tituloDoCapitulo = capitulo.titulo();
 
             epub.addSection(tituloDoCapitulo, new Resource(html.getBytes(), MediatypeService.XHTML));
         }

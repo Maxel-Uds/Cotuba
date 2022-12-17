@@ -1,22 +1,21 @@
 package com.cognitio.estatisticas;
 
+import cotuba.domain.Capitulo;
+import cotuba.domain.Ebook;
 import cotuba.plugin.AoFinalizarGeracao;
-import cotuba.plugin.CapituloSoParaLeitura;
-import cotuba.plugin.EbookSoParaLeitura;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.text.Normalizer;
-import java.util.Map;
 
 public class CalculadoraDeEstatisticas implements AoFinalizarGeracao {
 
     @Override
-    public void aposGeracao(EbookSoParaLeitura ebook) {
+    public void aposGeracao(Ebook ebook) {
         ContagemDePalavras contagemDePalavras = new ContagemDePalavras();
 
-        for(CapituloSoParaLeitura capitulo : ebook.getCapitulos()) {
-            String html = capitulo.getConteudoHTML();
+        for(Capitulo capitulo : ebook.capitulos()) {
+            String html = capitulo.conteudoHTML();
 
             Document doc = Jsoup.parse(html);
 
@@ -33,8 +32,8 @@ public class CalculadoraDeEstatisticas implements AoFinalizarGeracao {
 
         }
 
-        for(Map.Entry<String, Integer> contagem : contagemDePalavras.entrySet()) {
-            System.out.printf("palavra %s: %o ocorrências%n", contagem.getKey(), contagem.getValue());
+        for(ContagemDePalavras.Contagem contagem : contagemDePalavras) {
+            System.out.printf("palavra %s: %o ocorrências%n", contagem.palavra(), contagem.ocorrencias());
         }
     }
 }

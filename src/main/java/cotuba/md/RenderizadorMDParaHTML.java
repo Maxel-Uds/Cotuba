@@ -1,5 +1,6 @@
 package cotuba.md;
 
+import cotuba.builder.CapituloBuilder;
 import cotuba.domain.Capitulo;
 import cotuba.domain.LeTitulo;
 import cotuba.plugin.AoRenderizarHTML;
@@ -21,31 +22,31 @@ public class RenderizadorMDParaHTML {
     public List<Capitulo> renderiza(Path diretorioDosMD) {
         return obtemArquivosMD(diretorioDosMD).stream()
                 .map(arquivoMD -> {
-                    Capitulo capitulo = new Capitulo();
-                    Node document = parseDoMD(arquivoMD, capitulo);
-                    renderizaParaHTML(arquivoMD, capitulo, document);
-                    return capitulo;
+                    CapituloBuilder capituloBuilder = new CapituloBuilder();
+                    Node document = parseDoMD(arquivoMD, capituloBuilder);
+                    renderizaParaHTML(arquivoMD, capituloBuilder, document);
+                    return capituloBuilder.constroi();
                 }).collect(Collectors.toList());
     }
 
-    private void renderizaParaHTML(Path arquivoMD, Capitulo capitulo, Node document) {
+    private void renderizaParaHTML(Path arquivoMD, CapituloBuilder capituloBuilder, Node document) {
         try {
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             String html = renderer.render(document);
-            capitulo.setConteudoHTML(html);
 
-            AoRenderizarHTML.renderizou(capitulo);
+            String htmlModificado = AoRenderizarHTML.renderizou(html);
+            capituloBuilder.comConteudoHTML(htmlModificado);
         } catch (Exception ex) {
             throw new IllegalStateException("Erro ao renderizar para HTML o arquivo " + arquivoMD, ex);
         }
     }
 
-    private Node parseDoMD(Path arquivoMD, Capitulo capitulo) {
+    private Node parseDoMD(Path arquivoMD, CapituloBuilder capituloBuilder) {
         Parser parser = Parser.builder().build();
         Node document;
         try {
             document = parser.parseReader(Files.newBufferedReader(arquivoMD));
-            document.accept(new LeTitulo(capitulo));
+            document.accept(new LeTitulo(capituloBuilder));
         } catch (Exception ex) {
             throw new IllegalStateException("Erro ao fazer parse do arquivo " + arquivoMD, ex);
         }
