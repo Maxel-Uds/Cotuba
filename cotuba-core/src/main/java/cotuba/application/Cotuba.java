@@ -14,7 +14,8 @@ public class Cotuba {
     public void executa(ParametrosCotuba parametros) {
         FormatoEbook formato = parametros.getFormato();
         RenderizadorMDParaHTML renderizador = new RenderizadorMDParaHTML();
-        List<Capitulo> capitulos = renderizador.renderiza(parametros.getDiretorioDosMD());
+        RepositorioDeMDs repositorioDeMDs = parametros.getRepositorioDeMDs();
+        List<Capitulo> capitulos = renderizador.renderiza(repositorioDeMDs);
 
         Ebook ebook = new Ebook(formato, parametros.getArquivoDeSaida(), capitulos);
 

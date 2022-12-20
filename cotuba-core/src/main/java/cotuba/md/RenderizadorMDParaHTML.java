@@ -1,10 +1,14 @@
 package cotuba.md;
 
+import cotuba.application.RepositorioDeMDs;
 import cotuba.builder.CapituloBuilder;
 import cotuba.domain.Capitulo;
 import cotuba.domain.LeTitulo;
 import cotuba.plugin.AoRenderizarHTML;
+import org.commonmark.node.AbstractVisitor;
+import org.commonmark.node.Heading;
 import org.commonmark.node.Node;
+import org.commonmark.node.Text;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
@@ -19,17 +23,17 @@ import java.util.stream.Stream;
 
 public class RenderizadorMDParaHTML {
 
-    public List<Capitulo> renderiza(Path diretorioDosMD) {
-        return obtemArquivosMD(diretorioDosMD).stream()
-                .map(arquivoMD -> {
+    public List<Capitulo> renderiza(RepositorioDeMDs repositorioDeMDs) {
+        return repositorioDeMDs.obtemMDsDosCapitulos().stream()
+                .map(conteudoMD -> {
                     CapituloBuilder capituloBuilder = new CapituloBuilder();
-                    Node document = parseDoMD(arquivoMD, capituloBuilder);
-                    renderizaParaHTML(arquivoMD, capituloBuilder, document);
+                    Node document = parseDoMD(conteudoMD, capituloBuilder);
+                    renderizaParaHTML(capituloBuilder, document);
                     return capituloBuilder.constroi();
                 }).collect(Collectors.toList());
     }
 
-    private void renderizaParaHTML(Path arquivoMD, CapituloBuilder capituloBuilder, Node document) {
+    private void renderizaParaHTML(CapituloBuilder capituloBuilder, Node document) {
         try {
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             String html = renderer.render(document);
@@ -37,31 +41,20 @@ public class RenderizadorMDParaHTML {
             String htmlModificado = AoRenderizarHTML.renderizou(html);
             capituloBuilder.comConteudoHTML(htmlModificado);
         } catch (Exception ex) {
-            throw new IllegalStateException("Erro ao renderizar para HTML o arquivo " + arquivoMD, ex);
+            throw new IllegalStateException("Erro ao renderizar MD para HTML", ex);
         }
     }
 
-    private Node parseDoMD(Path arquivoMD, CapituloBuilder capituloBuilder) {
+    private Node parseDoMD(String conteudoMD, CapituloBuilder capituloBuilder) {
         Parser parser = Parser.builder().build();
         Node document;
         try {
-            document = parser.parseReader(Files.newBufferedReader(arquivoMD));
+            document = parser.parse(conteudoMD);
             document.accept(new LeTitulo(capituloBuilder));
         } catch (Exception ex) {
-            throw new IllegalStateException("Erro ao fazer parse do arquivo " + arquivoMD, ex);
+            throw new IllegalStateException("Erro ao fazer parse do arquivo " + conteudoMD, ex);
         }
 
         return document;
-    }
-
-    private List<Path> obtemArquivosMD(Path diretorioDosMD) {
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*.md");
-        try (Stream<Path> arquivosMD = Files.list(diretorioDosMD)) {
-            return arquivosMD.filter(matcher::matches)
-                    .sorted()
-                    .collect(Collectors.toList());
-        } catch (IOException ex) {
-            throw new IllegalStateException("Erro tentando encontrar arquivos .md em " + diretorioDosMD.toAbsolutePath(), ex);
-        }
     }
 }
