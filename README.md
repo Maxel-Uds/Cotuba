@@ -34,7 +34,11 @@ mvn clean package
 Após isso, copie os JARs que foram gerados em cada plugin para dentro do diretório `libs`, que foi gerado anteriormente, execute:
 
 ```
-cp target/*-jar-with-dependencies.jar -d /PATH_DO_LOCAL_DA_PASTA/libs
+## Para o plugin tema-paradizo
+cp target/tema-paradizo-0.0.1-SNAPSHOT-jar-with-dependencies.jar -d /PATH_DO_LOCAL_DA_PASTA/libs
+
+## Para o plugin estatisticas-ebook
+cp target/estatisticas-ebook-0.0.1-SNAPSHOT.jar -d /PATH_DO_LOCAL_DA_PASTA/libs
 ```
 
 Rode os comandos abaixo dentro do diretório da descompactação.

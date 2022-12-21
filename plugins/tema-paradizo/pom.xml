@@ -26,11 +26,6 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>org.jsoup</mainClass>
-						</manifest>
-					</archive>
 				</configuration>
 
 				<executions>
@@ -58,6 +53,7 @@
 			<groupId>cotuba</groupId>
 			<artifactId>cotuba-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>
